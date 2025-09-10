@@ -1,1 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+void main() {
+  runApp(const OsemsmerovkaApp());
+}
+
+class OsemsmerovkaApp extends StatelessWidget {
+  const OsemsmerovkaApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Osemsmerovka',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const PuzzlePage(),
+    );
+  }
+}
+
+class PuzzlePage extends StatefulWidget {
+  const PuzzlePage({super.key});
+
+  @override
+  State<PuzzlePage> createState() => _PuzzlePageState();
+}
+
+class _PuzzlePageState extends State<PuzzlePage> {
+  Color selectedColor = Colors.black.withOpacity(0.3);
+
+  final List<String> words = [
+    "MACKA",
+    "PES",
+    "DOM",
+    "KVET",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Osemsmerovka"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.color_lens),
+            onPressed: () => _pickColor(),
+          )
+        ],
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            const Text("Vyhľadaj slová v mriežke"),
+            const SizedBox(height: 20),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 8,
+                ),
+                itemCount: 64,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black12),
+                      color: selectedColor,
+                    ),
+                    child: Center(
+                      child: Text(
+                        String.fromCharCode(65 + (index % 26)),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _pickColor() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Vyber farbu"),
+          content: BlockPicker(
+            pickerColor: selectedColor,
+            onColorChanged: (color) {
+              setState(() {
+                selectedColor = color.withOpacity(0.3);
+              });
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
